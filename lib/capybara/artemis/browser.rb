@@ -71,7 +71,7 @@ protected
     
     uri.scheme ||= @current_scheme
     uri.host ||= @current_host
-    uri.port ||= @current_port unless uri.default_port == @current_port || (uri.default_port.nil? && @current_port == default_port)
+    uri.port ||= @current_port unless uri.default_port == @current_port || (uri.default_port.nil? && @current_port == default_port(@current_scheme))
     
     @current_scheme = uri.scheme
     @current_host = uri.host
@@ -89,10 +89,7 @@ protected
     "/"
   end
   
-  def default_port
-    @default_port ||= begin
-      uri = URI.parse('http://www.example.com')
-      uri.default_port
-    end
+  def default_port(scheme)
+    Net::HTTP.send("#{scheme}_default_port")
   end
 end
