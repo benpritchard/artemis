@@ -1,10 +1,9 @@
-# current_url, visit(path), find_xpath(query), find_css(query), html
-
 class Capybara::Artemis::Driver < Capybara::Driver::Base
   DEFAULT_OPTIONS = {
     :ignore_ssl_errors => false,
     :follow_redirects => true,
-    :redirect_limit => 5
+    :redirect_limit => 5,
+    :headers => {}
   }
   attr_reader :app, :options
 
