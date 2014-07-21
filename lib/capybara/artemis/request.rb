@@ -5,7 +5,7 @@ class Capybara::Artemis::Request
   def initialize(uri, ignore_ssl_errors, headers)
     @uri = uri
     @ignore_ssl_errors = ignore_ssl_errors
-    @request = Net::HTTP::Get.new(url)
+    @request = Net::HTTP::Get.new(@uri.request_uri)
     
     headers.each_pair do |header, value|
       @request[header.to_s] = value

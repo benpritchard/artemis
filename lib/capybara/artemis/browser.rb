@@ -71,13 +71,15 @@ protected
     
     uri.scheme ||= @current_scheme
     uri.host ||= @current_host
-    uri.port ||= @current_port unless uri.default_port == @current_port || (uri.default_port.nil? && @current_port == default_port(@current_scheme))
+    uri.port ||= @current_port||uri.default_port||default_port(@current_scheme)
     
     @current_scheme = uri.scheme
     @current_host = uri.host
     @current_port = uri.port
     
     reset_cache!
+    
+    uri = URI.parse(uri.to_s)
     
     @last_request = Capybara::Artemis::Request.new(uri, driver.ignore_ssl_errors?, driver.user_headers)
     @last_response = Capybara::Artemis::Response.new(last_request.go)
