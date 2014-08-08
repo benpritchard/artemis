@@ -64,14 +64,14 @@ class Capybara::Artemis::Node < Capybara::Driver::Node
 
 protected
 
-  def unnormalized_text(check_ancestor_visibility = true)
-    if !string_node.visible?(check_ancestor_visibility)
+  def unnormalized_text()
+    if !string_node.visible?
       ''
     elsif native.text?
       native.text
     elsif native.element?
       native.children.map do |child|
-        Capybara::Artemis::Node.new(driver, child).unnormalized_text(false)
+        Capybara::Artemis::Node.new(driver, child).unnormalized_text()
       end.join
     else
       ''
