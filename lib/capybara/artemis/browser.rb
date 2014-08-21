@@ -1,6 +1,6 @@
 class Capybara::Artemis::Browser
 
-  attr_reader :driver, :last_request, :last_response
+  attr_reader :driver, :last_request, :last_response, :redirect_chain
   attr_accessor :current_host
 
   def initialize(driver)
@@ -10,12 +10,20 @@ class Capybara::Artemis::Browser
   def visit(path)
     reset!
     _visit(path)
-    if driver.follow_redirects?
+#     if driver.follow_redirects?
       driver.redirect_limit.times do |i|
-        _visit(last_response.header("location")) if last_response.redirect?
+        if last_response.redirect?
+          redirected_location = last_response.header("location")
+          redirected_uri = URI.parse(redirected_location)
+          redirected_uri.scheme = @current_scheme unless redirected_uri.scheme
+          redirected_uri.host = @current_host unless redirected_uri.host
+          redirected_uri.port = @current_port unless redirected_uri.port || @current_port == default_port(@current_scheme)
+          @redirect_chain << redirected_uri.to_s
+          _visit(redirected_location) if driver.follow_redirects?
+        end
       end
-      raise Capybara::InfiniteRedirectError, "redirected more than #{driver.redirect_limit} times, check for infinite redirects." if last_response.redirect?
-    end
+      raise Capybara::InfiniteRedirectError, "redirected more than #{driver.redirect_limit} times, check for infinite redirects." if driver.follow_redirects? && last_response.redirect?
+#     end
   end
 
   def current_url
@@ -32,6 +40,7 @@ class Capybara::Artemis::Browser
     @last_request = nil
     @last_response = nil
     @temp_options = {}
+    @redirect_chain = []
     reset_cache!
   end
 

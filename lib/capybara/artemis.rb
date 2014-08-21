@@ -8,6 +8,7 @@ module Capybara
     require 'capybara/artemis/node'
     require 'capybara/artemis/browser'
     require 'capybara/artemis/driver'
+    require 'capybara/artemis/session'
   end
 end
 

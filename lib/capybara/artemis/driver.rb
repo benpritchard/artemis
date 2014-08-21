@@ -49,6 +49,10 @@ class Capybara::Artemis::Driver < Capybara::Driver::Base
     browser.current_url
   end
 
+  def redirect_chain
+    browser.redirect_chain
+  end
+
   def response_headers
     response.headers
   end
